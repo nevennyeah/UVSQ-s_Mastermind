@@ -1,1 +1,171 @@
+import random
 
+COULEURS = ('jaune', 'bleu', 'rouge', 'vert', 'blanc', 'noir', 'violet')
+
+def Solution_auto():
+    '''Crée une séquence solution aléatoire représentant la solution proposée par l'ordinateur'''
+    return tuple(random.choice(COULEURS) for _ in range(4))
+    '''A utiliser dans le cas où il s'agit d'une partie contre l'ordinateur''
+--------------------------------------------------------
+def obtenir_sequence(prompt='choisir une couleur'):
+    '''Obtient une séquence de 4 couleurs valides de l'utilisateur en vérifiant que les couleurs entrées sont dans la liste des couleurs autorisées'''
+    sequence = []
+    for _ in range(4):
+        couleur = input(f'{prompt} dans {COULEURS}: ').strip().lower() # Demande à l'utilisateur de choisir une couleur, l'a met en minuscules et supprime les espaces
+        if couleur not in COULEURS:
+            return None
+        sequence.append(couleur)
+    return tuple(sequence)  # Conversion en tuple car les séquences sont immuables
+    '''A utiliser pour obtenir une séquence de couleurs de l'utilisateur, que ce soit pour la solution ou pour une tentative'''
+---------------------------------------------------------
+def Solution_manuel():
+    '''Crée une solution définie par l'utilisateur en utilisant la fonction obtenir_sequence pour s'assurer que la solution est valide'''
+    return obtenir_sequence('Solution - choisir une couleur') # Demande à l'utilisateur de définir la solution en choisissant 4 couleurs valides
+    '''A utiliser dans le cas où il s'agit d'une partie entre deux joueurs humains, ou pour tester une séquence spécifique contre l'ordinateur'''
+---------------------------------------------------------
+def essai():
+    '''Obtient une tentative de l'utilisateur en utilisant la fonction obtenir_sequence pour s'assurer que la tentative est valide'''
+    return obtenir_sequence('Tentative - choisir une couleur')
+    '''Cette fonction permet de saisir une tentative de l'utilisateur et de vérifier qu'elle est valide, surtout utile pour les parties contre l'ordinateur où l'utilisateur doit deviner la solution'''
+----------------------------------------------------------
+def verification():
+    '''Vérifie la correspondance entre la tentative et la solution, en comptant les couleurs bien placées, les couleurs mal placées et les mauvaises couleurs, puis affiche les résultats'''
+    solution = Solution_auto()
+    tentative = essai()
+    '''A utiliser pour comparer une tentative de l'utilisateur à la solution, que ce soit dans une partie contre l'ordinateur ou entre deux joueurs humains'''
+    if tentative is None:
+        return "Erreur: couleur invalide"
+    
+    # Bien placées (indices corrects)
+    bien_placees = sum(t == s for t, s in zip(tentative, solution))
+    '''Calcul des couleurs bien placées en comparant directement les éléments de la tentative et de la solution'''
+    # Obtenir les indices non bien placés
+    indices_mal_places = [i for i in range(len(tentative)) if tentative[i] != solution[i]]
+    '''Création de listes pour les couleurs restantes à vérifier pour les mal placées et les mauvaises couleurs'''
+    # Couleurs mal placées et mauvaises
+    sol_reste = [solution[i] for i in indices_mal_places]
+    tent_reste = [tentative[i] for i in indices_mal_places]
+    '''Calcul des couleurs mal placées en vérifiant les couleurs restantes de la tentative contre les couleurs restantes de la solution'''
+    mal_placees = 0
+    for couleur in tent_reste:
+        if couleur in sol_reste:
+            mal_placees += 1
+            sol_reste.remove(couleur)
+    
+    mauvaises = len(tent_reste) - mal_placees
+    '''Calcul des mauvaises couleurs en soustrayant les mal placées du nombre total de couleurs restantes dans la tentative'''
+    return f"Résultats:\n- {bien_placees} couleur(s) au bon endroit\n- {mal_placees} couleur(s) bonne(s) mais mal placée(s)\n- {mauvaises} mauvaise(s) couleur(s)"
+    '''Affiche les résultats de la vérification entre la tentative et la solution'''
+-----------------------------------------------------------
+# prototype pour lancer une partie contre l'ordinateur
+def lancer_partie():
+    '''Lance une partie complète de Mastermind contre l'ordinateur'''
+    print("\n ===== MASTERMIND ===== ")
+    print(f"Couleurs: {', '.join(COULEURS)}\n")
+    
+    solution = Solution_auto()
+    tentatives_max = 12
+    tentative_num = 0
+    gagne = False
+    
+    while tentative_num < tentatives_max and not gagne:
+        tentative_num += 1
+        print(f"[Tentative {tentative_num}/{tentatives_max}]")
+        
+        tentative = obtenir_sequence("Entrez votre séquence")
+        
+        if tentative is None:
+            print(" Couleur invalide! Réessayez.\n")
+            tentative_num -= 1
+            continue
+        
+        # Calcul des résultats
+        bien_placees = sum(t == s for t, s in zip(tentative, solution))
+        
+        if bien_placees == 4:
+            gagne = True
+            print(f" VICTOIRE! Séquence trouvée: {solution}")
+            print(f" Gagné en {tentative_num} tentative(s)!\n")
+        else:
+            # Calcul mal placées
+            indices_mal_places = [i for i in range(len(tentative)) if tentative[i] != solution[i]]
+            sol_reste = [solution[i] for i in indices_mal_places]
+            tent_reste = [tentative[i] for i in indices_mal_places]
+            
+            mal_placees = 0
+            for couleur in tent_reste:
+                if couleur in sol_reste:
+                    mal_placees += 1
+                    sol_reste.remove(couleur)
+            
+            mauvaises = len(tent_reste) - mal_placees
+            
+            print(f"   ✓ {bien_placees} bien placée(s)")
+            print(f"   O {mal_placees} mal placée(s)")
+            print(f"   X {mauvaises} mauvaise(s)\n")
+    
+    if not gagne:
+        print(f" Défaite! La solution était: {solution}\n")
+-----------------------------------------------------------
+# prototype pour lancer une partie entre 2 joueur
+def lancer_partie_2joueurs():
+    '''Lance une partie de Mastermind entre deux joueurs'''
+    print("\n===== MASTERMIND - 2 JOUEURS =====")
+    print(f"Couleurs disponibles: {', '.join(COULEURS)}\n")
+    # Cas où c'est une partie entre deux joueurs humains, le Joueur 1 définit la solution et le Joueur 2 doit deviner la solution en un nombre limité de tentatives, avec des indications sur les couleurs bien placées, mal placées et mauvaises à chaque tentative. 
+    # Le Joueur 1 définit la solution
+    print("JOUEUR 1 - Définissez la séquence secrète")
+    print("=" * 50) # Affiche une ligne de séparation pour une meilleure lisibilité
+    solution = obtenir_sequence("Entrez votre séquence") 
+    
+    if solution is None:
+        print(" Erreur: couleur invalide!")
+        return
+    
+    print("\n" + "=" * 50) # Affiche une ligne de séparation pour une meilleure lisibilité
+    print(" JOUEUR 2 - À vous de trouver la séquence!")
+    print("=" * 50 + "\n") # Affiche une ligne de séparation pour une meilleure lisibilité
+    
+    tentatives_max = 12 # nombre maximum de tentatives pour le Joueur 2 (soit on met une valeur fixe, soit on met un input pour que le Joueur 1 puisse choisir le nombre de tentatives)
+    tentative_num = 0 # compteur de tentatives pour suivre le nombre de tentatives effectuées par le Joueur 2
+    gagne = False
+    
+    while tentative_num < tentatives_max and not gagne:
+        tentative_num += 1
+        print(f"[Tentative {tentative_num}/{tentatives_max}]")
+        
+        tentative = obtenir_sequence("Entrez votre tentative")
+        
+        if tentative is None:
+            print(" Couleur invalide! Réessayez.\n")
+            tentative_num -= 1
+            continue
+        
+        # Calcul des résultats
+        bien_placees = sum(t == s for t, s in zip(tentative, solution))
+        
+        if bien_placees == 4:
+            gagne = True
+            print(f"\n VICTOIRE! Séquence trouvée: {solution}")
+            print(f" JOUEUR 2 a gagné en {tentative_num} tentative(s)!\n")
+        else:
+            # Calcul mal placées
+            indices_mal_places = [i for i in range(len(tentative)) if tentative[i] != solution[i]]
+            sol_reste = [solution[i] for i in indices_mal_places]
+            tent_reste = [tentative[i] for i in indices_mal_places]
+            
+            mal_placees = 0
+            for couleur in tent_reste:
+                if couleur in sol_reste:
+                    mal_placees += 1
+                    sol_reste.remove(couleur)
+            
+            mauvaises = len(tent_reste) - mal_placees
+            
+            print(f"   ✓ {bien_placees} bien placée(s)")
+            print(f"   O {mal_placees} mal placée(s)")
+            print(f"   X {mauvaises} mauvaise(s)\n")
+    
+    if not gagne:
+        print(f" Défaite! La solution était: {solution}")
+        print(f" JOUEUR 1 a gagné!\n")
