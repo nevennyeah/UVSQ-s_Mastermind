@@ -5,7 +5,7 @@ COULEURS = ('jaune', 'bleu', 'rouge', 'vert', 'blanc', 'noir', 'violet')
 def Solution_auto():
     '''Crée une séquence solution aléatoire représentant la solution proposée par l'ordinateur'''
     return tuple(random.choice(COULEURS) for _ in range(4))
-    '''A utiliser dans le cas où il s'agit d'une partie contre l'ordinateur''
+    '''A utiliser dans le cas où il s'agit d'une partie contre l'ordinateur'''
 --------------------------------------------------------
 def obtenir_sequence(prompt='choisir une couleur'):
     '''Obtient une séquence de 4 couleurs valides de l'utilisateur en vérifiant que les couleurs entrées sont dans la liste des couleurs autorisées'''
