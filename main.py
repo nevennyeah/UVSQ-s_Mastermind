@@ -52,6 +52,6 @@ def jouer_mastermind():
 
         print(f"-> {bien} bien placé(s), {mal} mal placé(s)\n")
 
-    print(f"Dommage ! Vous avez perdu. La solution était : {''.join(solution)}")
+    print(f"Dommage ! Vous avez perdu. La solution était : {' '.join(solution)}")
 
 jouer_mastermind()
