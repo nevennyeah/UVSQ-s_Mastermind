@@ -5,7 +5,6 @@ COULEURS = ('yellow', 'blue', 'red', 'green', 'white', 'black', 'purple')
 
 # Solution aléatoire
 solution = tuple(random.choice(COULEURS) for _ in range(4))
-print("Solution :", solution)
 
 # Fenêtre
 fenetre = tk.Tk()
