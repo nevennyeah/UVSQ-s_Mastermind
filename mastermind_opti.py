@@ -6,13 +6,14 @@ COULEURS = ('yellow', 'blue', 'red', 'green', 'white', 'black', 'purple')
 # Solution aléatoire
 solution = tuple(random.choice(COULEURS) for _ in range(4))
 
+# Limite de début
+tentatives = 12
+début = 0
+
 # Fenêtre
 fenetre = tk.Tk()
 fenetre.title("Mastermind")
 
-# =========================
-# Cases de couleur (Labels)
-# =========================
 entries = []
 frame_entries = tk.Frame(fenetre)
 frame_entries.pack()
@@ -27,9 +28,7 @@ for i in range(4):
     lbl.grid(row=0, column=i, padx=5)
     entries.append(lbl)
 
-# =========================
-# Fonction bouton couleur
-# =========================
+
 def ajouter_couleur(couleur):
     for lbl in entries:
         if lbl.couleur == "":
@@ -37,31 +36,24 @@ def ajouter_couleur(couleur):
             lbl.config(bg=couleur)
             break
 
-# =========================
-# Boutons couleurs
-# =========================
-frame_couleurs = tk.Frame(fenetre)
+
+frame_couleurs = tk.Frame(fenetre) #bouton de couleur
 frame_couleurs.pack()
 
 for c in COULEURS:
     btn = tk.Button(frame_couleurs, text=c, command=lambda col=c: ajouter_couleur(col))
     btn.pack(side=tk.LEFT)
 
-# =========================
-# Historique
-# =========================
-historique = tk.Text(fenetre, height=12, width=60)
+
+historique = tk.Text(fenetre, height=12, width=60) # initialisation de l'historique, tah c'est dans le nom
 historique.pack()
 
 def ajouter_carre_historique(couleur):
-    """Ajoute un petit carré coloré dans le Text."""
     carre = tk.Label(historique, width=2, height=1, bg=couleur, relief="solid")
     historique.window_create(tk.END, window=carre)
-    historique.insert(tk.END, " ")  # petit espace
+    historique.insert(tk.END, " ")
 
-# =========================
-# Vérification
-# =========================
+
 def obtenir_sequence():
     seq = []
     for lbl in entries:
@@ -71,11 +63,20 @@ def obtenir_sequence():
     return tuple(seq)
 
 def verifier():
+    global début
+
+    # Vérifier limite
+    if début >= tentatives:
+        label_resultat.config(text="❌ Plus de début !")
+        return
+
     tentative = obtenir_sequence()
 
     if tentative is None:
         label_resultat.config(text="Couleur invalide")
         return
+
+    début += 1  # On compte la tentative
 
     # Bien placées
     bien_placees = sum(t == s for t, s in zip(tentative, solution))
@@ -93,55 +94,37 @@ def verifier():
 
     mauvaises = len(tent_reste) - mal_placees
 
-    # =========================
-    # Ajout dans l'historique (carrés + texte)
-    # =========================
+   
+    historique.insert(tk.END, f"{début}: ")
     for c in tentative:
         ajouter_carre_historique(c)
 
     historique.insert(tk.END, f" → ✓{bien_placees} O{mal_placees} X{mauvaises}\n")
 
-    # =========================
-    # Affichage principal
-    # =========================
+
     label_resultat.config(text=f"✓{bien_placees} O{mal_placees} X{mauvaises}")
 
+    # Victoire
     if bien_placees == 4:
         label_resultat.config(text="🎉 VICTOIRE !")
+        btn_valider.config(state="disabled")
+        return
 
-    # Reset des cases
+    # Défaite après 12 début
+    if début == tentatives:
+        label_resultat.config(text=f"GAME OVER! il fallait trouver {solution}")
+        btn_valider.config(state="disabled")
+
+    # Réinitilaisation des cases
     for lbl in entries:
         lbl.couleur = ""
         lbl.config(bg="white")
 
-# =========================
-# Bouton valider
-# =========================
+
 btn_valider = tk.Button(fenetre, text="Valider", command=verifier)
 btn_valider.pack()
 
-# =========================
-# Résultat
-# =========================
 label_resultat = tk.Label(fenetre, text="")
 label_resultat.pack()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 fenetre.mainloop()
