@@ -45,6 +45,8 @@ La variante du jeu avec 4 pions et 6 couleurs permet 6⁴ = 1 296 combinaisons ;
 
 Inventé par Mordecai Meirowitz, expert en télécommunications israëlien, dans les années 1970, le jeu se base sur un jeu plus ancien : bulls and cows (taureaux et vaches) qui se jouait avec papier et crayon et des nombres au lieu de couleurs.
 
+---
+
 ## English 🇬🇧
 
 ### List of students who worked on the project

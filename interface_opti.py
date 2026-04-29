@@ -20,7 +20,7 @@ def un_joueur():
 def deux_joueurs():
     ...
 def parametres():
-    import parametres.py
+    import parametres
 for i in range(10):
     fenetre.grid_rowconfigure(i, weight=1)
     fenetre.grid_columnconfigure(i, weight=1)
