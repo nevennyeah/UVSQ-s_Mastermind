@@ -7,7 +7,7 @@ COULEURS = ('yellow', 'blue', 'red', 'green', 'white', 'black', 'purple')
 solution = tuple(random.choice(COULEURS) for _ in range(4))
 
 # Limite de début
-tentatives = 12
+tentatives = 11
 début = 0
 
 # Fenêtre
