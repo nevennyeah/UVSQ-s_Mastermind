@@ -18,7 +18,7 @@ def fermer_fenetre():
 def un_joueur():
     import mastermind_opti
 def deux_joueurs():
-    ...
+    import mastermind_opti_2P
 def parametres():
     import parametres
 for i in range(10):
