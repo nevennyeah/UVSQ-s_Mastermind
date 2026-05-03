@@ -7,6 +7,7 @@ tentatives_max = 11
 début = 0
 partie_commencee = False
 solution = None
+historique_parties = [] # liste pour stocker les données brutes de la partie
 
 # Fenêtre
 fenetre = tk.Tk()
@@ -22,7 +23,7 @@ spin_tentatives = tk.Spinbox(frame_parametres, from_=1, to=20, width=3, textvari
 spin_tentatives.pack(side=tk.LEFT, padx=(0, 10))
 
 btn_demarrer = tk.Button(frame_parametres, text="Démarrer la partie")
-btn_demarrer.pack(side=tk.LEFT)
+btn_demarrer.pack(side=tk.LEFT, padx=5)
 
 label_info = tk.Label(fenetre, text="Réglez les tentatives puis démarrez la partie.")
 label_info.pack()
@@ -49,7 +50,6 @@ def ajouter_couleur(couleur):
             lbl.config(bg=couleur)
             break
 
-
 def reinitialiser_cases():
     for lbl in entries:
         lbl.couleur = ""
@@ -64,7 +64,7 @@ def set_etat_controles(actif: bool):
 
 
 def demarrer_partie():
-    global tentatives_max, début, partie_commencee, solution
+    global tentatives_max, début, partie_commencee, solution, historique_parties
     try:
         tentatives_max = int(tentatives_var.get())
     except ValueError:
@@ -74,12 +74,98 @@ def demarrer_partie():
     début = 0
     solution = tuple(random.choice(COULEURS) for _ in range(4))
     partie_commencee = True
+    historique_parties.clear() # on vide l'historique interne s'il y avait déjà une sauvegarde
     historique.delete("1.0", tk.END)
     reinitialiser_cases()
     set_etat_controles(True)
     label_info.config(text=f"Partie lancée : {tentatives_max} tentatives")
     label_resultat.config(text="")
 
+def sauvegarder_partie():
+    global tentatives_max, début, solution, partie_commencee, historique_parties
+    
+    if not partie_commencee:
+        label_resultat.config(text="Vous n'êtes pas en train de jouer, à quoi bon sauvegarder ??")
+        return
+    
+    f_output = open('sauvegarde_mastermind.csv', 'w')
+
+    # ligne 1 : paramètres de base
+    f_output.write(str(tentatives_max) + ',' + str(début) + '\n')
+
+    # ligne 2 : la solution secrète
+    f_output.write(','.join(solution) + '\n')
+
+    # lignes suivantes : l'historique des essais
+    for tour in historique_parties:
+        ligne = ','.join(tour["tentative"]) + ',' + str(tour["bien"]) + ',' + str(tour["mal"]) + ',' + str(tour["mauvaises"])
+        f_output.write(ligne + '\n')
+
+    f_output.close() # fermeture du fichier
+    label_resultat.config(text="Partie sauvegardée avec succès !")
+
+def charger_partie():
+    global tentatives_max, début, solution, partie_commencee, historique_parties
+    try:
+        # ouverture du fichier en lecture ('r')
+        f_input = open('sauvegarde_mastermind.csv', 'r')
+
+        # lecture ligne 1 : tentatives_max, début
+        ligne1 = f_input.readline().strip().split(',')
+        tentatives_max = int(ligne1[0])
+        début = int(ligne1[1])
+        tentatives_var.set(tentatives_max) # met à jour la Spinbox
+
+        # lecture ligne 2 : solution
+        ligne2 = f_input.readline().strip().split(',')
+        solution = tuple(ligne2)
+
+        # réinitialisation de l'interface et des variables
+        historique_parties.clear()
+        historique.delete("1.0", tk.END) 
+        
+        # lecture de l'historique ligne par ligne
+        li = f_input.readline()
+        while li != '':
+            data = li.strip().split(',')
+            tentative = tuple(data[0:4])
+            bien = int(data[4])
+            mal = int(data[5])
+            mauvaises = int(data[6])
+
+            # recréation de la mémoire du jeu
+            historique_parties.append({
+                "tentative": tentative, "bien": bien, "mal": mal, "mauvaises": mauvaises
+            })
+
+            # recréation de l'interface visuelle (historique textuel)
+            # on simule le numéro du tour pour l'affichage
+            tour_actuel = len(historique_parties)
+            historique.insert(tk.END, f"{tour_actuel}: ")
+            for c in tentative:
+                ajouter_carre_historique(c)
+            historique.insert(tk.END, f" → ✓{bien} O{mal} X{mauvaises}\n")
+
+            li = f_input.readline()
+
+        f_input.close() # fermeture du fichier
+
+        # mettre à jour l'état global de la partie
+        partie_commencee = True
+        set_etat_controles(True)
+        reinitialiser_cases()
+        label_info.config(text=f"Partie chargée : {tentatives_max} tentatives")
+        label_resultat.config(text="Partie chargée avec succès !")
+
+    except FileNotFoundError:
+        label_resultat.config(text="Aucun fichier de sauvegarde trouvé.")
+
+# ajout des boutons 'sauvegarder' et 'charger' a côté de 'démarrer'
+btn_sauvegarder = tk.Button(frame_parametres, text="Sauvegarder", command=sauvegarder_partie)
+btn_sauvegarder.pack(side=tk.LEFT, padx=5)
+
+btn_charger = tk.Button(frame_parametres, text="Charger", command=charger_partie)
+btn_charger.pack(side=tk.LEFT, padx=5)
 
 frame_couleurs = tk.Frame(fenetre) #bouton de couleur
 frame_couleurs.pack()
@@ -144,6 +230,13 @@ def verifier():
 
     mauvaises = len(tent_reste) - mal_placees
 
+    # sauvegarde de la tentative en mémoire pour l'exportation
+    historique_parties.append({
+        "tentative": tentative, 
+        "bien": bien_placees, 
+        "mal": mal_placees, 
+        "mauvaises": mauvaises
+    })
    
     historique.insert(tk.END, f"{début}: ")
     for c in tentative:
