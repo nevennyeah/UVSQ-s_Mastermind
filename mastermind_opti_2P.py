@@ -144,13 +144,13 @@ def ajouter_couleur(couleur):
             lbl.config(bg=couleur)
             break
 
-frame_couleurs = tk.Frame(fenetre) # bouton de couleur
+frame_couleurs = tk.Frame(fenetre)
 frame_couleurs.pack()
 for c in COULEURS:
     btn = tk.Button(frame_couleurs, text=c, command=lambda col=c: ajouter_couleur(col))
     btn.pack(side=tk.LEFT)
 
-historique = tk.Text(fenetre, height=14, width=60) # initialisation de l'historique, tah c'est dans le nom
+historique = tk.Text(fenetre, height=14, width=60)
 historique.pack()
 
 label_info = tk.Label(fenetre, text="Joueur 1 : choisissez la combinaison secrète")
@@ -264,7 +264,6 @@ def verifier():
 
     evaluer_secret(tentative)
     
-    # réinitilaisation des cases
     reinitialiser_cases()
 
 
