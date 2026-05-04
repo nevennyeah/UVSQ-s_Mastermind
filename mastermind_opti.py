@@ -3,13 +3,26 @@ import random
 
 COULEURS = ('yellow', 'blue', 'red', 'green', 'white', 'black', 'purple')
 
-tentatives_max = 11
 début = 0
 partie_commencee = False
 solution = None
 historique_parties = [] # liste pour stocker les données brutes de la partie
 
-# Fenêtre
+tentatives_max = 11
+
+try:
+    f_input = open("Sauvegarde/config.csv", "r")
+    f_input.readline() 
+    ligne = f_input.readline() 
+    
+    if ligne != "":
+        donnees = ligne.strip().split(',')
+        tentatives_max = int(donnees[1])
+        
+    f_input.close()
+except FileNotFoundError:
+    pass
+
 fenetre = tk.Tk()
 fenetre.title("Mastermind")
 
@@ -88,7 +101,7 @@ def sauvegarder_partie():
         label_resultat.config(text="Vous n'êtes pas en train de jouer, à quoi bon sauvegarder ??")
         return
     
-    f_output = open('sauvegarde_mastermind.csv', 'w')
+    f_output = open('Sauvegarde/sauvegarde_mastermind.csv', 'w')
 
     # ligne 1 : paramètres de base
     f_output.write(str(tentatives_max) + ',' + str(début) + '\n')
@@ -108,7 +121,7 @@ def charger_partie():
     global tentatives_max, début, solution, partie_commencee, historique_parties
     try:
         # ouverture du fichier en lecture ('r')
-        f_input = open('sauvegarde_mastermind.csv', 'r')
+        f_input = open('Sauvegarde/sauvegarde_mastermind.csv', 'r')
 
         # lecture ligne 1 : tentatives_max, début
         ligne1 = f_input.readline().strip().split(',')
@@ -263,6 +276,35 @@ def verifier():
         lbl.couleur = ""
         lbl.config(bg="white")
 
+
+def annuler_tour():
+    global début, historique_parties
+
+    # on vérifie s'il y a bien un tour à annuler et si la partie est en cours
+    if début == 0 or len(historique_parties) == 0:
+        label_resultat.config(text="Rien à annuler !")
+        return
+
+    # on retire le dernier tour de la mémoire
+    historique_parties.pop()
+    début -= 1 # on recule le compteur de tentatives
+
+    # on efface tout l'historique visuel (le widget Text)
+    historique.delete("1.0", tk.END)
+
+    # on réécrit l'historique visuel avec les données restantes
+    for i, tour in enumerate(historique_parties):
+        historique.insert(tk.END, f"{i + 1}: ")
+        for c in tour["tentative"]:
+            ajouter_carre_historique(c)
+        historique.insert(tk.END, f" → ✓{tour['bien']} O{tour['mal']} X{tour['mauvaises']}\n")
+
+
+    btn_valider.config(state=tk.NORMAL)
+    label_resultat.config(text="Dernier tour annulé. À vous !")
+
+btn_annuler = tk.Button(fenetre, text="Annuler le dernier coup", command=annuler_tour)
+btn_annuler.pack(pady=5)
 
 btn_valider = tk.Button(fenetre, text="Valider", command=verifier)
 btn_valider.pack()

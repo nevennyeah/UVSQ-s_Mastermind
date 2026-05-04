@@ -10,7 +10,19 @@ tentatives = 11
 début = 0
 historique_parties = [] # liste pour stocker les données brutes de la partie
 
-# Fenêtre
+try:
+    f_input = open("Sauvegarde/config.csv", "r")
+    f_input.readline() 
+    ligne = f_input.readline() 
+    
+    if ligne != "":
+        donnees = ligne.strip().split(',')
+        tentatives = int(donnees[1])
+        
+    f_input.close()
+except FileNotFoundError:
+    pass
+
 fenetre = tk.Tk()
 fenetre.title("Mastermind 2 joueurs")
 frame_boutons = tk.Frame(fenetre)
@@ -25,7 +37,7 @@ def sauvegarder_partie():
         return
     
     # on ouvre le fichier pour écrire dedans
-    f_output = open('sauvegarde_mastermind_2P.csv', 'w')
+    f_output = open('Sauvegarde/sauvegarde_mastermind_2P.csv', 'w')
 
     # 1ere ligne: les paramètres et la phase
     f_output.write(f"{phase},{tentatives},{début}\n")
@@ -46,7 +58,7 @@ def charger_partie():
     global phase, tentatives, début, solution, historique_parties
     try:
         # on lit le fichier de save
-        f_input = open('sauvegarde_mastermind_2P.csv', 'r')
+        f_input = open('Sauvegarde/sauvegarde_mastermind_2P.csv', 'r')
 
         # on lit la ligne 1
         ligne1 = f_input.readline().strip().split(',')
