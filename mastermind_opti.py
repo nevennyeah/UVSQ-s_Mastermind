@@ -207,6 +207,26 @@ def obtenir_sequence():
         seq.append(lbl.couleur)
     return tuple(seq)
 
+def ajouter_resultat_couleurs(bien, mal, mauvaises):
+    # Carrés verts
+    for _ in range(bien):
+        carre = tk.Label(historique, width=2, height=1, bg="green", relief="solid")
+        historique.window_create(tk.END, window=carre)
+        historique.insert(tk.END, " ")
+
+    # Carrés orange
+    for _ in range(mal):
+        carre = tk.Label(historique, width=2, height=1, bg="orange", relief="solid")
+        historique.window_create(tk.END, window=carre)
+        historique.insert(tk.END, " ")
+
+    # Carrés rouges
+    for _ in range(mauvaises):
+        carre = tk.Label(historique, width=2, height=1, bg="red", relief="solid")
+        historique.window_create(tk.END, window=carre)
+        historique.insert(tk.END, " ")
+
+
 def verifier():
     global début
 
@@ -255,10 +275,12 @@ def verifier():
     for c in tentative:
         ajouter_carre_historique(c)
 
-    historique.insert(tk.END, f" → ✓{bien_placees} O{mal_placees} X{mauvaises}\n")
+    historique.insert(tk.END, " → ")
+    ajouter_resultat_couleurs(bien_placees, mal_placees, mauvaises)
+    historique.insert(tk.END, "\n")
 
 
-    label_resultat.config(text=f"✓{bien_placees} O{mal_placees} X{mauvaises}")
+    label_resultat.config(text=f"{bien_placees} verts, {mal_placees} oranges, {mauvaises} rouges")
 
     # Victoire
     if bien_placees == 4:
@@ -316,3 +338,5 @@ btn_demarrer.config(command=demarrer_partie)
 set_etat_controles(False)
 
 fenetre.mainloop()
+
+
