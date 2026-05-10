@@ -157,7 +157,9 @@ def charger_partie():
             historique.insert(tk.END, f"{tour_actuel}: ")
             for c in tentative:
                 ajouter_carre_historique(c)
-            historique.insert(tk.END, f" → ✓{bien} O{mal} X{mauvaises}\n")
+            historique.insert(tk.END, " → ")
+            ajouter_resultat_couleurs(bien, mal, mauvaises)
+            historique.insert(tk.END, "\n")
 
             li = f_input.readline()
 
@@ -319,7 +321,9 @@ def annuler_tour():
         historique.insert(tk.END, f"{i + 1}: ")
         for c in tour["tentative"]:
             ajouter_carre_historique(c)
-        historique.insert(tk.END, f" → ✓{tour['bien']} O{tour['mal']} X{tour['mauvaises']}\n")
+        historique.insert(tk.END, " → ")
+        ajouter_resultat_couleurs(tour['bien'], tour['mal'], tour['mauvaises'])
+        historique.insert(tk.END, "\n")
 
 
     btn_valider.config(state=tk.NORMAL)
