@@ -2,6 +2,7 @@ import tkinter as tk
 from PIL import Image, ImageTk
 import pygame #pour pouvoir mettre de la musique, et ce uniquement sur le jeu. Sinon on avait une alternative avec playsound
 import subprocess #pour pouvoir rouvrir les fichier une fois fermer. En créant des fenètres TkInter séparées
+import sys #pour pouvoir fermer les fenetres TkInter séparées
 
 fenetre = tk.Tk()
 fenetre.title("Mastermind")
@@ -17,9 +18,9 @@ img4 = tk.PhotoImage(file = "Media/parametre.png")
 def fermer_fenetre():
     fenetre.destroy()
 def un_joueur():
-    subprocess.Popen(["python", "mastermind_opti.py"])
+    subprocess.Popen([sys.executable, "mastermind_opti.py"])
 def deux_joueurs():
-    subprocess.Popen(["python", "mastermind_opti_2P.py"])
+    subprocess.Popen([sys.executable, "mastermind_opti_2P.py"])
 for i in range(10):
     fenetre.grid_rowconfigure(i, weight=1)
     fenetre.grid_columnconfigure(i, weight=1)
