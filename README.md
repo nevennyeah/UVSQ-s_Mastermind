@@ -45,6 +45,10 @@ La variante du jeu avec 4 pions et 6 couleurs permet 6⁴ = 1 296 combinaisons ;
 
 Inventé par Mordecai Meirowitz, expert en télécommunications israëlien, dans les années 1970, le jeu se base sur un jeu plus ancien : bulls and cows (taureaux et vaches) qui se jouait avec papier et crayon et des nombres au lieu de couleurs.
 
+### Crédits
+
+Musique généreusement donné par potsu, issue de son album "just friends" ([Lien](https://www.youtube.com/watch?v=3qn-RdciUHo&list=OLAK5uy_mMlwOalErb-rbRuh0AFDDFVijzcbNuapo))
+
 ---
 
 ## English 🇬🇧
@@ -91,3 +95,7 @@ This information can be materialized by 2 numbers placed next to the attempt or,
 The variation of the game with 4 pawns and 6 colors make space for 6⁴ = 1 296 combinaisons ; the one with 5 pawns and 8 colors 8⁵ = 32 768 combinaisons.
 
 The Mastermind was created by Mordeacai Meirowitz, an Israeli post and telecommunications expert in the 70s. The original game take inspiration on an older game : bulls and cows, which was played with paper and pencils, and numbers as the role of colors.
+
+### Credits
+
+Music issued by potsu, coming from his album "just friends" ([Lien](https://www.youtube.com/watch?v=3qn-RdciUHo&list=OLAK5uy_mMlwOalErb-rbRuh0AFDDFVijzcbNuapo))
